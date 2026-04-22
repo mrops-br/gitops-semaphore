@@ -1,6 +1,6 @@
 global:
   domain: "semaphore.mrops.com.br"
-  basePath: "/semaphore-ui"
+  basePath: "/semaphoreUI"
 
 semaphore:
   image:

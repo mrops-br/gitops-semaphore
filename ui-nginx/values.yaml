@@ -1,6 +1,6 @@
 global:
   domain: "semaphore.mrops.com.br"
-  basePath: "/semaphore-ui"
+  basePath: "/semaphoreUI"
 
 # =============================================================================
 # SemaphoreUI Application
@@ -87,7 +87,7 @@ nginx:
   affinity: {}
 
 # =============================================================================
-# Ingress (routes to nginx; nginx handles / → /semaphore-ui redirect)
+# Ingress (routes to nginx; nginx handles / → /semaphoreUI redirect)
 # =============================================================================
 ingress:
   enabled: true

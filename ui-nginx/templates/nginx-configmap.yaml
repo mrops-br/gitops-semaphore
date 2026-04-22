@@ -38,12 +38,12 @@ data:
             listen 80;
             server_name _;
 
-            # Redirect bare root to /semaphore-ui (TLS terminated upstream at traefik)
+            # Redirect bare root to {{ .Values.global.basePath }}/ (TLS terminated upstream at traefik)
             location = / {
                 return 301 https://$host{{ .Values.global.basePath }}/;
             }
 
-            # Proxy all /semaphore-ui/* traffic to Semaphore backend
+            # Proxy all {{ .Values.global.basePath }}/* traffic to Semaphore backend
             # Semaphore must have web_root={{ .Values.global.basePath }} in config.json
             location {{ .Values.global.basePath }}/ {
                 proxy_pass         http://semaphore_backend;
