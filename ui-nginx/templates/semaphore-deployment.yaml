@@ -78,6 +78,13 @@ spec:
                 secretKeyRef:
                   name: {{ include "semaphore-ui.fullname" . }}-semaphore-secret
                   key: SEMAPHORE_ACCESS_KEY_ENCRYPTION
+            {{- if .Values.semaphore.oidc.enabled }}
+            - name: SEMAPHORE_OIDC_PROVIDERS
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "semaphore-ui.fullname" . }}-semaphore-oidc
+                  key: SEMAPHORE_OIDC_PROVIDERS
+            {{- end }}
             {{- with .Values.semaphore.extraEnv }}
             {{- toYaml . | nindent 12 }}
             {{- end }}

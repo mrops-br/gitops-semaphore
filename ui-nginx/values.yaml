@@ -50,6 +50,16 @@ semaphore:
     size: 1Gi
     mountPath: "/var/lib/semaphore"
 
+  oidc:
+    enabled: false
+    providerKey: "keycloak"
+    displayName: "Sign in with Keycloak"
+    color: "orange"
+    icon: "login"
+    providerUrl: ""
+    baseUrl: ""
+    vaultPath: ""
+
   extraEnv: []
   podAnnotations: {}
   podSecurityContext: {}

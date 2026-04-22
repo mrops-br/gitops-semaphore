@@ -5,6 +5,11 @@ global:
 semaphore:
   image:
     tag: "v2.10.0"
+  oidc:
+    enabled: true
+    providerUrl: "https://auth.mrops.com.br/realms/mrops-base"
+    baseUrl: "https://semaphore.mrops.com.br/semaphoreUI"
+    vaultPath: "semaphore/ui-nginx/dev/credentials"
   admin:
     username: "admin"
     password: "admin"
