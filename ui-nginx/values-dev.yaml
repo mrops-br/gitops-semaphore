@@ -1,0 +1,20 @@
+global:
+  domain: "semaphore.mrops.com.br"
+  basePath: "/semaphore-ui"
+
+semaphore:
+  image:
+    tag: "v2.10.0"
+  admin:
+    username: "admin"
+    password: "admin"
+    email: "admin@mrops.com.br"
+    name: "Admin"
+  persistence:
+    size: 1Gi
+    storageClass: "local-path"
+
+ingress:
+  enabled: true
+  hosts:
+    - host: "semaphore.mrops.com.br"

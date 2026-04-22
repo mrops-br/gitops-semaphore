@@ -1,0 +1,16 @@
+apiVersion: v2
+name: semaphore-ui
+description: SemaphoreUI OSS behind Nginx reverse proxy, served under /semaphore-ui
+type: application
+version: 0.1.0
+appVersion: "2.10.0"
+keywords:
+  - semaphore
+  - ansible
+  - ci-cd
+  - nginx
+maintainers:
+  - name: platform-team
+home: https://semaphoreui.com
+sources:
+  - https://github.com/semaphoreui/semaphore

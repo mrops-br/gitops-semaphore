@@ -1,0 +1,109 @@
+global:
+  domain: "semaphore.mrops.com.br"
+  basePath: "/semaphore-ui"
+
+# =============================================================================
+# SemaphoreUI Application
+# =============================================================================
+semaphore:
+  replicaCount: 1
+
+  image:
+    repository: semaphoreui/semaphore
+    pullPolicy: IfNotPresent
+    tag: "v2.10.0"
+
+  service:
+    type: ClusterIP
+    port: 3000
+
+  config:
+    dbDialect: "bolt"
+    dbPath: "/var/lib/semaphore/database.boltdb"
+    # Leave blank to auto-generate on first install; set explicitly to keep stable across restarts
+    cookieHash: ""
+    cookieEncryption: ""
+    accessKeyEncryption: ""
+    emailSender: ""
+    emailHost: ""
+    emailPort: ""
+    ldapEnabled: "false"
+
+  admin:
+    username: "admin"
+    password: "admin"
+    email: "admin@mrops.com.br"
+    name: "Admin"
+
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+
+  persistence:
+    enabled: true
+    storageClass: "local-path"
+    accessMode: ReadWriteOnce
+    size: 1Gi
+    mountPath: "/var/lib/semaphore"
+
+  extraEnv: []
+  podAnnotations: {}
+  podSecurityContext: {}
+  securityContext: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# =============================================================================
+# Nginx Reverse Proxy
+# =============================================================================
+nginx:
+  replicaCount: 1
+
+  image:
+    repository: nginx
+    pullPolicy: IfNotPresent
+    tag: "1.25-alpine"
+
+  service:
+    type: ClusterIP
+    port: 80
+
+  resources:
+    requests:
+      cpu: "50m"
+      memory: "64Mi"
+    limits:
+      cpu: "200m"
+      memory: "128Mi"
+
+  podAnnotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
+# =============================================================================
+# Ingress (routes to nginx; nginx handles / → /semaphore-ui redirect)
+# =============================================================================
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+  hosts:
+    - host: "semaphore.mrops.com.br"
+  tls:
+    enabled: false
+    secretName: ""
+
+# =============================================================================
+# ServiceAccount
+# =============================================================================
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""

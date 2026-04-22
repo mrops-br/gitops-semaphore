@@ -1,0 +1,7 @@
+SemaphoreUI has been deployed.
+
+Access: https://{{ .Values.global.domain }}{{ .Values.global.basePath }}/
+
+Nginx proxies:
+  /          → 301 redirect to {{ .Values.global.basePath }}/
+  {{ .Values.global.basePath }}/  → semaphore backend (port {{ .Values.semaphore.service.port }})

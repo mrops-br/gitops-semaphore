@@ -1,0 +1,20 @@
+{{- if .Values.semaphore.persistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "semaphore-ui.fullname" . }}-data
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "semaphore-ui.semaphore.labels" . | nindent 4 }}
+  annotations:
+    helm.sh/resource-policy: keep
+spec:
+  accessModes:
+    - {{ .Values.semaphore.persistence.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.semaphore.persistence.size }}
+  {{- if .Values.semaphore.persistence.storageClass }}
+  storageClassName: {{ .Values.semaphore.persistence.storageClass | quote }}
+  {{- end }}
+{{- end }}

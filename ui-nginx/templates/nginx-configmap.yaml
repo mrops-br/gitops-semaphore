@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "semaphore-ui.fullname" . }}-nginx-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "semaphore-ui.nginx.labels" . | nindent 4 }}
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+    error_log  /var/log/nginx/error.log warn;
+    pid        /var/run/nginx.pid;
+
+    events {
+        worker_connections  1024;
+    }
+
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+
+        log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                          '$status $body_bytes_sent "$http_referer" '
+                          '"$http_user_agent" "$http_x_forwarded_for"';
+
+        access_log  /var/log/nginx/access.log  main;
+
+        sendfile        on;
+        keepalive_timeout  65;
+        client_max_body_size 10m;
+
+        upstream semaphore_backend {
+            server {{ include "semaphore-ui.semaphore.serviceName" . }}:{{ .Values.semaphore.service.port }};
+        }
+
+        server {
+            listen 80;
+            server_name _;
+
+            # Redirect bare root to /semaphore-ui (TLS terminated upstream at traefik)
+            location = / {
+                return 301 https://$host{{ .Values.global.basePath }}/;
+            }
+
+            # Proxy all /semaphore-ui/* traffic to Semaphore backend
+            # Semaphore must have web_root={{ .Values.global.basePath }} in config.json
+            location {{ .Values.global.basePath }}/ {
+                proxy_pass         http://semaphore_backend;
+                proxy_http_version 1.1;
+
+                proxy_set_header   Host              $host;
+                proxy_set_header   X-Real-IP         $remote_addr;
+                proxy_set_header   X-Forwarded-For   $proxy_add_x_forwarded_for;
+                proxy_set_header   X-Forwarded-Proto $http_x_forwarded_proto;
+
+                # WebSocket support for live task output
+                proxy_set_header   Upgrade    $http_upgrade;
+                proxy_set_header   Connection "upgrade";
+
+                proxy_read_timeout 3600s;
+                proxy_send_timeout 3600s;
+            }
+
+            # Health check for readiness/liveness probes
+            location /healthz {
+                access_log off;
+                return 200 "ok\n";
+                add_header Content-Type text/plain;
+            }
+        }
+    }

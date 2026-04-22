@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "semaphore-ui.fullname" . }}-semaphore-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "semaphore-ui.semaphore.labels" . | nindent 4 }}
+data:
+  # Secrets (cookie_hash, cookie_encryption, access_key_encryption) are not set here;
+  # they are injected as env vars from the Secret and override these fields at runtime.
+  config.json: |
+    {
+      "bolt": {
+        "dialect": "bolt",
+        "path": "{{ .Values.semaphore.config.dbPath }}"
+      },
+      "web_host": "https://{{ .Values.global.domain }}",
+      "web_root": "{{ .Values.global.basePath }}",
+      "port": ":{{ .Values.semaphore.service.port }}",
+      "interface": "",
+      "tmp_path": "/tmp/semaphore",
+      "email_sender": "{{ .Values.semaphore.config.emailSender }}",
+      "email_host": "{{ .Values.semaphore.config.emailHost }}",
+      "email_port": "{{ .Values.semaphore.config.emailPort }}",
+      "ldap_activated": "{{ .Values.semaphore.config.ldapEnabled }}",
+      "demo_mode": false,
+      "use_remote_runner": false
+    }
