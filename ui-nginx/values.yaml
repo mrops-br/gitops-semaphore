@@ -11,7 +11,7 @@ semaphore:
   image:
     repository: semaphoreui/semaphore
     pullPolicy: IfNotPresent
-    tag: "v2.10.0"
+    tag: "v2.17.26"
 
   service:
     type: ClusterIP
