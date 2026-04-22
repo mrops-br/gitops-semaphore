@@ -6,23 +6,19 @@ metadata:
   labels:
     {{- include "semaphore-ui.semaphore.labels" . | nindent 4 }}
 data:
-  # Secrets (cookie_hash, cookie_encryption, access_key_encryption) are not set here;
-  # they are injected as env vars from the Secret and override these fields at runtime.
-  config.json: |
-    {
-      "bolt": {
-        "dialect": "bolt",
-        "path": "{{ .Values.semaphore.config.dbPath }}"
-      },
-      "web_host": "https://{{ .Values.global.domain }}",
-      "web_root": "{{ .Values.global.basePath }}",
-      "port": ":{{ .Values.semaphore.service.port }}",
-      "interface": "",
-      "tmp_path": "/tmp/semaphore",
-      "email_sender": "{{ .Values.semaphore.config.emailSender }}",
-      "email_host": "{{ .Values.semaphore.config.emailHost }}",
-      "email_port": "{{ .Values.semaphore.config.emailPort }}",
-      "ldap_activated": "{{ .Values.semaphore.config.ldapEnabled }}",
-      "demo_mode": false,
-      "use_remote_runner": false
-    }
+  SEMAPHORE_DB_DIALECT:    {{ .Values.semaphore.config.dbDialect | quote }}
+  SEMAPHORE_DB_PATH:       {{ .Values.semaphore.config.dbPath | quote }}
+  SEMAPHORE_WEB_HOST:      {{ printf "https://%s" .Values.global.domain | quote }}
+  SEMAPHORE_WEB_ROOT:      {{ .Values.global.basePath | quote }}
+  SEMAPHORE_PORT:          {{ printf ":%v" .Values.semaphore.service.port | quote }}
+  SEMAPHORE_TMP_PATH:      "/tmp/semaphore"
+  SEMAPHORE_LDAP_ACTIVATED: {{ .Values.semaphore.config.ldapEnabled | quote }}
+  {{- if .Values.semaphore.config.emailSender }}
+  SEMAPHORE_EMAIL_SENDER:  {{ .Values.semaphore.config.emailSender | quote }}
+  {{- end }}
+  {{- if .Values.semaphore.config.emailHost }}
+  SEMAPHORE_EMAIL_HOST:    {{ .Values.semaphore.config.emailHost | quote }}
+  {{- end }}
+  {{- if .Values.semaphore.config.emailPort }}
+  SEMAPHORE_EMAIL_PORT:    {{ .Values.semaphore.config.emailPort | quote }}
+  {{- end }}
